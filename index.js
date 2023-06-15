@@ -258,6 +258,44 @@ async function run() {
             res.send(result);
         })
 
+        // selected classes related api
+        app.get('/selected', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+
+            if (!email) {
+                res.send([]);
+            }
+
+            const decodedEmail = req.decoded.email;
+            if (email !== decodedEmail) {
+                return res.status(403).send({ error: true, message: 'forbidden access' })
+            }
+
+            const query = { userEmail: email };
+            const result = await selectedCollection.find(query).toArray();
+            res.send(result);
+        });
+
+        app.get('/selected/class/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await selectedCollection.findOne(query);
+            res.send(result);
+        })
+
+        app.post('/selected', async (req, res) => {
+            const selectedClass = req.body;
+            const result = await selectedCollection.insertOne(selectedClass);
+            res.send(result);
+        })
+
+        app.delete('/selected/class/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await selectedCollection.deleteOne(query);
+            res.send(result);
+        })
+
 
 
 
