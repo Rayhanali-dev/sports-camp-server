@@ -164,6 +164,14 @@ async function run() {
             res.send(result);
         });
 
+        // basic check for role instructor  or admin for classes page
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email }
+            const user = await usersCollection.findOne(query);
+            res.send(user);
+        })
+
 
 
 
