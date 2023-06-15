@@ -150,6 +150,21 @@ async function run() {
             res.send(result);
         })
 
+         // instructor related api
+         app.get('/instructors', async (req, res) => {
+            const query = { role: "instructor" };
+            const result = await usersCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        app.get('/instructor/classes', verifyJWT, verifyInstructor, async (req, res) => {
+            const email = req.query.email;
+            const query = { instructorEmail: email };
+            const result = await classesCollection.find(query).toArray();
+            res.send(result);
+        });
+
+
 
 
     // Send a ping to confirm a successful connection
