@@ -296,6 +296,25 @@ async function run() {
             res.send(result);
         })
 
+        // enrolled class related apis
+        app.get('/enrolled', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+
+            if (!email) {
+                res.send([]);
+            }
+
+            const decodedEmail = req.decoded.email;
+            if (email !== decodedEmail) {
+                return res.status(403).send({ error: true, message: 'forbidden access' })
+            }
+
+            const query = { userEmail: email };
+            const result = await enrolledCollection.find(query).toArray();
+            res.send(result);
+        });
+
+
 
 
 
