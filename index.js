@@ -172,6 +172,92 @@ async function run() {
             res.send(user);
         })
 
+        // classes related api 
+        app.get('/classes', async (req, res) => {
+            const query = { status: "approved" };
+            const result = await classesCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        app.post('/classes', verifyJWT, verifyInstructor, async (req, res) => {
+            const newClass = req.body;
+            const result = await classesCollection.insertOne(newClass)
+            res.send(result);
+        })
+
+        app.get('/class/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await classesCollection.findOne(query);
+            res.send(result);
+        })
+
+        app.patch('/classes/:id', verifyJWT, verifyInstructor, async (req, res) => {
+            const id = req.params.id;
+            const updatedClass = req.body;
+            console.log(updatedClass)
+            console.log(id);
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    name: updatedClass.name,
+                    availableSeats: updatedClass.availableSeats,
+                    price: updatedClass.price
+                },
+            };
+
+            const result = await classesCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+
+        app.get('/all-classes', async (req, res) => {
+            const result = await classesCollection.find().toArray();
+            res.send(result);
+        })
+
+        app.patch('/classes/approved/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    status: 'approved'
+                },
+            };
+
+            const result = await classesCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+
+        app.patch('/classes/denied/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    status: 'denied'
+                },
+            };
+
+            const result = await classesCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+
+
+        app.patch('/classes/feedback/:id', async (req, res) => {
+            const id = req.params.id;
+            const feedback = req.body;
+            console.log(feedback)
+            console.log(id);
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: feedback,
+            };
+
+            const result = await classesCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+
 
 
 
